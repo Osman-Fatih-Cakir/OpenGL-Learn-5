@@ -22,7 +22,7 @@ typedef glm::vec4 vec4;
 
 GLuint shader, skybox_shader;
 
-vec3 eye = vec3(1.5f, 0.6f, 1.5f);
+vec3 eye = vec3(0.0f, 0.0f, 1.5f);
 vec3 up = vec3(0.f, 1.f, 0.f);
 mat4 projection, view, normal_matrix;
 GLuint projection_loc, view_loc, normal_matrix_loc, skybox_projection_loc, skybox_view_loc, eye_loc;
@@ -209,6 +209,10 @@ std::vector<std::string> faces{
 	"skybox/back.jpg"
 };
 
+bool is_reflection = true;
+GLfloat index = 0.67;
+GLuint is_ref_loc, index_loc;
+
 // Function prototypes
 void init();
 void change_viewport(int w, int h);
@@ -267,6 +271,9 @@ void change_viewport(int w, int h)
 
 void init()
 {
+	std::cout << "W/A/S/D/R/F to move around." << std::endl;
+	std::cout << "T to choose 'Refraction' or 'Reflection'." << std::endl;
+	std::cout << "Q/E to adjust index of refraction index." << std::endl;
 	init_shaders();
 	init_camera();
 	init_skybox();
@@ -307,6 +314,15 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 		case 'f':
 			view = glm::translate(view, vec3(0.0, -0.1, 0.0));
+			break;
+		case 't':
+			is_reflection = !is_reflection;
+			break;
+		case 'q':
+			index += 0.05;
+			break;
+		case 'e':
+			index += -0.05;
 			break;
 	}
 	glutPostRedisplay();
@@ -444,6 +460,9 @@ void init_cube()
 	normal_matrix_loc = glGetUniformLocation(shader, "normal_matrix");
 
 	glUniform1i(glGetUniformLocation(shader, "skybox"), 0);
+
+	index_loc = glGetUniformLocation(shader, "index");
+	is_ref_loc = glGetUniformLocation(shader, "is_reflection");
 }
 
 void draw_camera()
@@ -454,11 +473,16 @@ void draw_camera()
 	glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, &(glm::mat4(1.0))[0][0]);
 	glUniformMatrix4fv(normal_matrix_loc, 1, GL_FALSE, &(normal_matrix)[0][0]);
 
-	glUniform3fv(eye_loc, 1, &eye[0]);
+	// This doesn't work if the camera rotates. I am also not sure if it is something correct to calculate eye coordinates
+	vec3 cam_pos = vec3((glm::inverse(view))[3]); 
+	glUniform3fv(eye_loc, 1, &cam_pos[0]);
 }
 
 void draw_cube()
 {
+	glUniform1f(index_loc, index);
+	glUniform1i(is_ref_loc, (int)is_reflection);
+
 	glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, &cube_model[0][0]);
 
 	// Texture
