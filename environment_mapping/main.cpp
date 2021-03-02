@@ -518,18 +518,19 @@ void render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.9f, 0.9f, 0.9f, 1.f);
 
-	glUseProgram(shader);
-	draw_camera();
-	draw_cube();
-
 	// Disable depth write to draw skybox always at background
 	// Change depth function so depth test passes when values are equal to depth buffer's content
-	glDepthFunc(GL_LEQUAL);
+	glDisable(GL_DEPTH_TEST);
 
 	glUseProgram(skybox_shader);
 	draw_skybox_camera();
 	draw_skybox();
-	glDepthFunc(GL_LESS); // Set depth function back
+
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(shader);
+	draw_camera();
+	draw_cube();
 
 	glutSwapBuffers();
 }
