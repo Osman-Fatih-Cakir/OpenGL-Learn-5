@@ -298,10 +298,10 @@ void keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 		case 'w':
-			view = glm::translate(view, vec3(0.0, 0.0, 0.1));
+			view = glm::translate(view, vec3(0.0, 0.1, 0.0));
 			break;
 		case 's':
-			view = glm::translate(view, vec3(0.0, 0.0, -0.1));
+			view = glm::translate(view, vec3(0.0, -0.1, 0.0));
 			break;
 		case 'a':
 			view = glm::translate(view, vec3(-0.1, 0.0, 0.0));
@@ -310,10 +310,10 @@ void keyboard(unsigned char key, int x, int y)
 			view = glm::translate(view, vec3(0.1, 0.0, 0.0));
 			break;
 		case 'r':
-			view = glm::translate(view, vec3(0.0, 0.1, 0.0));
+			view = glm::translate(view, vec3(0.0, 0.0, 0.1));
 			break;
 		case 'f':
-			view = glm::translate(view, vec3(0.0, -0.1, 0.0));
+			view = glm::translate(view, vec3(0.0, 0.0, -0.1));
 			break;
 		case 't':
 			is_reflection = !is_reflection;
